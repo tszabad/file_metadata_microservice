@@ -1,0 +1,71 @@
+var values = [
+    { name: "ONE HUNDRED", val: 100 },
+    { name: "TWENTY", val: 20 },
+    { name: "TEN", val: 10 },
+    { name: "FIVE", val: 5 },
+    { name: "ONE", val: 1 },
+    { name: "QUARTER", val: 0.25 },
+    { name: "DIME", val: 0.1 },
+    { name: "NICKEL", val: 0.05 },
+    { name: "PENNY", val: 0.01 }
+  ];
+  
+  function checkCashRegister(price, cash, cid) {
+    var change = cash-price;
+    var cashObj = {status: null, change: []};
+    var cashInDraverArr = [];
+    
+  
+    for (var i=0; i<cid.length;i++){
+      cashInDraverArr.push(cid[i][1]);
+    }
+  
+    var cashInDraver = cashInDraverArr.reduce((a,b)=> a +b);
+    cashInDraver = Math.round(cashInDraver*100)/100;
+    
+    var cid1 = cid.reduce((a, b) => {
+      a[b[0]] = b[1];
+      return a;
+    },{});
+     
+    if (change > cashInDraver){
+       cashObj.status = "INSUFFICIENT_FUNDS";
+       return cashObj;
+  
+     }if (change === cashInDraver){
+       cashObj.status = "CLOSED";
+       cashObj.change = cid;
+       return cashObj;
+     }
+  
+      
+      var changeBack = values.reduce(function(acc, curr) {
+      var value = 0;
+      
+      while (cid1[curr.name] > 0 && change >= curr.val) {
+        change -= curr.val;
+        cid1[curr.name] -= curr.val;
+        value += curr.val;
+  
+        change = Math.round(change * 100) / 100;
+      }
+      
+      if (value > 0) {
+          acc.push([ curr.name, value ]);
+      }
+      return acc; 
+    }, []);
+     if (changeBack.length < 1 || change > 0) {
+      cashObj.status = "INSUFFICIENT_FUNDS";
+      return cashObj;
+    }
+  
+      cashObj.status = "OPEN";
+      cashObj.change = changeBack;
+      return cashObj;
+      }
+  
+  
+  
+  
+  checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
